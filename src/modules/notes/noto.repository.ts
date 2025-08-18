@@ -1,5 +1,4 @@
 import { supabase } from "@/lib/supabase";
-import { Trophy } from "lucide-react";
 
 export const noteRepository = {
   async create(userId: string, params: { title?: string; parentId?: number }) {

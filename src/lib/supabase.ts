@@ -1,7 +1,6 @@
 import { Note } from "@/modules/notes/note.entity";
 import { createClient, RealtimeChannel, RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 import { Database } from "database.types";
-import { channel } from "diagnostics_channel";
 
 
 export const supabase = createClient<Database>(
