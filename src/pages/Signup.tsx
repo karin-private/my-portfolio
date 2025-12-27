@@ -1,6 +1,7 @@
 import { authRepository } from "@/modules/auth/auth.repository";
 import { useState } from "react";
 
+
 function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ function Signup() {
   const signup = async () => {
     const user = await authRepository.signup(name, email, password)
     console.log(user)
+
   }
 
   return (

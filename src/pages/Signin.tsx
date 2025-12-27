@@ -6,14 +6,25 @@ import { Link, Navigate } from 'react-router-dom';
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const currentUserStore = useCurrentUserStore();
 
 
   const signin = async () => {
-    const user = await authRepository.signin(email, password);
-    console.log(user)
+    try {
+      const user = await authRepository.signin(email, password);
+      console.log(user)
+      currentUserStore.set(user)
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage("ログインに失敗しました");
+      }
+    }
   }
-  
+
   if (currentUserStore.currentUser != null) return <Navigate replace to="/" />;
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
@@ -22,6 +33,7 @@ function Signin() {
           Notionクローン
         </h2>
         <div className="mt-8 w-full max-w-md">
+          <div>{errorMessage}</div>
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <div className="space-y-6">
               <div>

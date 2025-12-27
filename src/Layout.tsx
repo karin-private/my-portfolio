@@ -56,6 +56,7 @@ const Layout = () => {
     navigate(`/notes/${noteId}`)
     setIsShowModal(false)
   }
+  
   if (currentUser == null) return <Navigate replace to="/signin" />;
 
   return (

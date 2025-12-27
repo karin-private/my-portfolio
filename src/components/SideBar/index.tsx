@@ -23,7 +23,7 @@ const SideBar: FC<Props> = ({ onSearchButtonClicked }) => {
       currentUserStore.currentUser!.id,
       {});
     noteStore.set([newNote]);
-    novigate(`/nates/${newNote.id}`)
+    novigate(`/notes/${newNote.id}`)
   }
 
   const sighnout = async () => {
