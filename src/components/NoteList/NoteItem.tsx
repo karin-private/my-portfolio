@@ -8,7 +8,11 @@ import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash } from
 import { Item } from '../SideBar/Item';
 import { cn } from '@/lib/utils';
 import { Note } from '@/modules/notes/note.entity';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { noteRepository } from '@/modules/notes/noto.repository';
+import { useCurrentUserStore } from '@/modules/auth/current-user.state';
+
+
 
 interface Props {
   note: Note;
@@ -32,9 +36,30 @@ export function NoteItem({
   onExpand,
 }: Props) {
   const [isHoverd, setIsHoverd] = useState(false);
+  const { currentUser } = useCurrentUserStore();
+  const [children, setChildren] = useState<Note[]>([]);;
+
+  useEffect(() => {
+    const fetchChildren = async () => {
+      const childrenArray = await noteRepository.find(
+        currentUser!.id,
+        note.id
+      );
+
+      // ここで state に入れる
+      setChildren(childrenArray ?? []);
+    };
+
+    fetchChildren();
+  }, [currentUser, note.id]);
 
   const getIcon = () => {
-    return expanded ? ChevronDown : isHoverd ? ChevronRight : FileIcon
+    if (children.length === 0) {
+      return FileIcon
+    } else {
+      return expanded ? ChevronDown : isHoverd ? ChevronRight : FileIcon
+
+    }
   }
 
   const menu = (
