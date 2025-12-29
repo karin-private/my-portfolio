@@ -34,6 +34,16 @@ export const useNoteStore = () => {
             oldNotes.filter((note) => ![...childrenIds, id].includes(note.id))
         )
     }
+
+    const reorderWithinParent = (parentId: number | undefined, reordered: Note[]) => {
+        const others = notes.filter(
+            n => n.parent_document !== parentId
+        );
+
+        return {
+            notes: [...others, ...reordered],
+        };
+    };
     const getOne = (id: number) => notes.find((note) => note.id == id);
     const clear = () => setNotes([])
     return {
@@ -41,6 +51,9 @@ export const useNoteStore = () => {
         getOne,
         set,
         delete: deleteNote,
-        clear
+        clear,
+        reorderWithinParent: reorderWithinParent
     }
+
+
 }

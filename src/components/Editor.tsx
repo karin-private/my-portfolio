@@ -16,6 +16,7 @@ function Editor({ onChange, initialContent }: EditorProps) {
     return encodeURIComponent(name.replace(/\s+/g, "_"));
   }
 
+
   const editor = useCreateBlockNote({
     dictionary: ja,
     initialContent: initialContent != null ? JSON.parse(initialContent) : undefined,
@@ -41,6 +42,7 @@ function Editor({ onChange, initialContent }: EditorProps) {
       <BlockNoteView
         editor={editor}
         onChange={() => onChange(JSON.stringify(editor.document))}
+
         theme="light"
       />
     </div>

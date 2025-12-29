@@ -1,11 +1,21 @@
 import { cn } from '@/lib/utils';
-import { NoteItem } from './NoteItem';
+import { SortableNoteItem } from './SortableNoteItem';
 import { useNoteStore } from '@/modules/notes/note.state';
 import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { noteRepository } from '@/modules/notes/noto.repository';
 import { Note } from '@/modules/notes/note.entity';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  DndContext,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable';
+
 
 interface NoteListProps {
   layer?: number;
@@ -21,6 +31,26 @@ export function NoteList({ layer = 0, parentId }: NoteListProps) {
   const { currentUser } = useCurrentUserStore();
   const [expanded, setExpanded] = useState<Map<number, boolean>>(new Map())
   // {1: true, 2: true}
+
+  const siblingNotes = notes.filter(
+    (note) => note.parent_document === parentId
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = siblingNotes.findIndex(n => n.id === active.id);
+    const newIndex = siblingNotes.findIndex(n => n.id === over.id);
+
+    if (oldIndex === -1 || newIndex === -1) return;
+
+    const reordered = arrayMove(siblingNotes, oldIndex, newIndex);
+
+    // store全体を更新する
+    noteStore.reorderWithinParent(parentId, reordered);
+  };
+
 
   const createChild = async (e: React.MouseEvent, parentId: number) => {
     e.stopPropagation();
@@ -63,27 +93,34 @@ export function NoteList({ layer = 0, parentId }: NoteListProps) {
       >
         ページがありません
       </p>
-      {notes
-        .filter((note) => note.parent_document == parentId)
-        .map((note) => {
-          return (
-            <div key={note.id}>
-              <NoteItem
-                note={note}
-                layer={layer}
-                onCreate={(e) => createChild(e, note.id)}
-                onExpand={(e: React.MouseEvent) => fetchChildren(e, note)}
-                expanded={expanded.get(note.id)}
-                onClick={() => moveToDetail(note.id)}
-                onDelete={(e) => deleteNote(e, note.id)}
-                isSelected={id == note.id}
-              />
-              {expanded.get(note.id) && (
-                <NoteList layer={layer + 1} parentId={note.id} />
-              )}
-            </div>
-          );
-        })}
+      <DndContext onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={notes.map(n => n.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {notes
+            .filter((note) => note.parent_document == parentId)
+            .map((note) => {
+              return (
+                <div key={note.id}>
+                  <SortableNoteItem
+                    note={note}
+                    layer={layer}
+                    onCreate={(e) => createChild(e, note.id)}
+                    onExpand={(e: React.MouseEvent) => fetchChildren(e, note)}
+                    expanded={expanded.get(note.id)}
+                    onClick={() => moveToDetail(note.id)}
+                    onDelete={(e) => deleteNote(e, note.id)}
+                    isSelected={id == note.id}
+                  />
+                  {expanded.get(note.id) && (
+                    <NoteList layer={layer + 1} parentId={note.id} />
+                  )}
+                </div>
+              );
+            })}
+        </SortableContext>
+      </DndContext>
     </>
   );
 }

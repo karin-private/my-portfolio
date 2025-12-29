@@ -4,7 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash } from 'lucide-react';
+import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash, Folder } from 'lucide-react';
 import { Item } from '../SideBar/Item';
 import { cn } from '@/lib/utils';
 import { Note } from '@/modules/notes/note.entity';
@@ -57,7 +57,7 @@ export function NoteItem({
     if (children.length === 0) {
       return FileIcon
     } else {
-      return expanded ? ChevronDown : isHoverd ? ChevronRight : FileIcon
+      return expanded ? ChevronDown : isHoverd ? ChevronRight : Folder
 
     }
   }
