@@ -7,6 +7,7 @@ interface ItemProps {
   onClick?: () => void;
   onIconClick?: (event: React.MouseEvent) => void;
   isActive?: boolean;
+  leadingItem?: React.ReactNode;
   trailingItem?: React.ReactElement;
 }
 
@@ -16,6 +17,7 @@ export function Item({
   onIconClick,
   icon: Icon,
   isActive = false,
+  leadingItem,
   trailingItem,
 }: ItemProps) {
   return (
@@ -28,6 +30,7 @@ export function Item({
       role="button"
       style={{ paddingLeft: '12px' }}
     >
+      {leadingItem}
       <Icon
         onClick={onIconClick}
         className="shrink-0 w-[18px] h-[18px] mr-2 text-muted-foreground"

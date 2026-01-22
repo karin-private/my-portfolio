@@ -23,6 +23,7 @@ interface Props {
   onCreate?: (event: React.MouseEvent) => void;
   onDelete?: (event: React.MouseEvent) => void;
   onClick?: () => void;
+  dragHandle?: React.ReactNode;
 }
 
 export function NoteItem({
@@ -34,6 +35,7 @@ export function NoteItem({
   onCreate,
   onDelete,
   onExpand,
+  dragHandle
 }: Props) {
   const [isHoverd, setIsHoverd] = useState(false);
   const { currentUser } = useCurrentUserStore();
@@ -111,6 +113,16 @@ export function NoteItem({
         onIconClick={onExpand}
         trailingItem={menu}
         isActive={isHoverd || isSelected}
+        leadingItem={
+          dragHandle && (
+            <span
+              onClick={(e) => e.stopPropagation()}
+              className="mr-1 flex items-center cursor-grab text-muted-foreground hover:text-foreground"
+            >
+              {dragHandle}
+            </span>
+          )
+        }
       />
     </div>
   );

@@ -11,9 +11,23 @@ export const useNoteStore = () => {
 
             const combineNotes = [...oldNotes, ...newNotes];
 
-            const uniqueNotes: { [key: number]: Note } = {}
+            const uniqueNotes: { [key: number]: Note } = {};
+            const idToIndexMap: { [id: number]: number } = {};
+            let index = 0;
+
             for (const note of combineNotes) {
-                uniqueNotes[note.id] = note;
+                const existingIndex = idToIndexMap[note.id];
+
+                if (existingIndex === undefined) {
+                    // 初登場の id
+                    uniqueNotes[index] = note;
+                    idToIndexMap[note.id] = index;
+                    index++;
+                } else {
+                    // 並び順はそのまま、中身だけ最新に差し替え
+                    uniqueNotes[existingIndex] = note;
+
+                }
             }
             return Object.values(uniqueNotes)
         })
@@ -36,13 +50,15 @@ export const useNoteStore = () => {
     }
 
     const reorderWithinParent = (parentId: number | undefined, reordered: Note[]) => {
-        const others = notes.filter(
-            n => n.parent_document !== parentId
-        );
-
-        return {
-            notes: [...others, ...reordered],
-        };
+        // const others = notes.filter(
+        //     n => n.parent_document !== parentId
+        // );
+        setNotes(
+            [...reordered]
+        )
+        // return {
+        //     notes: [...reordered],
+        // };
     };
     const getOne = (id: number) => notes.find((note) => note.id == id);
     const clear = () => setNotes([])

@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { NoteItem } from './NoteItem';
 import { Note } from '@/modules/notes/note.entity';
+import { GripVertical } from 'lucide-react';
 
 
 interface Props {
@@ -33,8 +34,21 @@ export const SortableNoteItem = (props: Props) => {
     };
 
     return (
-        <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-            <NoteItem {...props} />
+        <div ref={setNodeRef} style={style} {...attributes}>
+            <NoteItem
+                {...props}
+                dragHandle={
+                    <span
+                        onPointerDown={
+                            listeners?.onPointerDown as React.PointerEventHandler<HTMLSpanElement>
+                        }
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-grab mr-1"
+                    >
+                        <GripVertical size={14} />
+                    </span>
+                }
+            />
         </div>
     );
 };
