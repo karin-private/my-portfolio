@@ -49,7 +49,7 @@ export const useNoteStore = () => {
         )
     }
 
-    const reorderWithinParent = (parentId: number | undefined, reordered: Note[]) => {
+    const reorderWithinParent = (reordered: Note[]) => {
         // const others = notes.filter(
         //     n => n.parent_document !== parentId
         // );

@@ -43,7 +43,7 @@ export function NoteList({ layer = 0, parentId }: NoteListProps) {
 
     const reordered = arrayMove(notes, oldIndex, newIndex);
 
-    noteStore.reorderWithinParent(parentId, reordered);
+    noteStore.reorderWithinParent(reordered);
     let parentArray: number[] = [];
     let indexChild: number = -1;
     const orders = reordered.map((note, index) => {
