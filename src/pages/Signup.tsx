@@ -1,17 +1,35 @@
 import { authRepository } from "@/modules/auth/auth.repository";
+import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { useState } from "react";
+
+import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from 'lucide-react';
 
 
 function Signup() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const currentUserStore = useCurrentUserStore();
+  const navigate = useNavigate();
+  const [passDisplay, setPassDisplay] = useState(false)
+
+
+
 
   const signup = async () => {
     const user = await authRepository.signup(name, email, password)
     console.log(user)
-
+    currentUserStore.set(user)
+    if (user) {
+      navigate("/", { replace: true });
+    }
   }
+
+  const onIconClick = () => {
+    setPassDisplay(!passDisplay);
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
@@ -67,7 +85,7 @@ function Signup() {
                 >
                   パスワード
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 flex items-center gap-3">
                   <input
                     onChange={(e) => setPassword(e.target.value)}
                     id="password"
@@ -77,6 +95,14 @@ function Signup() {
                     type="password"
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-sm"
                   />
+                  <div >
+                    {passDisplay ? <Eye
+                      onClick={onIconClick}
+                      className="shrink-0 w-6 h-6 mr-2 text-muted-foreground cursor-pointer"
+                    /> : <EyeOff
+                      onClick={onIconClick}
+                      className="shrink-0 w-6 h-6 mr-2 text-muted-foreground cursor-pointer" />}
+                  </div>
                 </div>
               </div>
               <div>

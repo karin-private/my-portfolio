@@ -2,12 +2,14 @@ import { authRepository } from '@/modules/auth/auth.repository';
 import { useState } from 'react';
 import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { Link, Navigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const currentUserStore = useCurrentUserStore();
+  const [passDisplay, setPassDisplay] = useState(false)
 
 
   const signin = async () => {
@@ -25,12 +27,19 @@ function Signin() {
     }
   }
 
+  const onIconClick = () => {
+    setPassDisplay(!passDisplay);
+  }
+
+
+
+
   if (currentUserStore.currentUser != null) return <Navigate replace to="/" />;
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-gray-900">
-          Notionクローン
+          Karin's Portfolio
         </h2>
         <div className="mt-8 w-full max-w-md">
           <div>{errorMessage}</div>
@@ -62,16 +71,24 @@ function Signin() {
                 >
                   パスワード
                 </label>
-                <div className="mt-1">
+                <div className="mt-1 flex items-center gap-3">
                   <input
                     onChange={(e) => setPassword(e.target.value)}
                     id="password"
                     name="password"
                     placeholder="パスワード"
                     required
-                    type="password"
+                    type={passDisplay ? "text" : "password"}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring--500 focus:border--500 sm:text-sm"
                   />
+                  <div >
+                    {passDisplay ? <Eye
+                      onClick={onIconClick}
+                      className="shrink-0 w-6 h-6 mr-2 text-muted-foreground cursor-pointer"
+                    /> : <EyeOff
+                      onClick={onIconClick}
+                      className="shrink-0 w-6 h-6 mr-2 text-muted-foreground cursor-pointer" />}
+                  </div>
                 </div>
               </div>
               <div>

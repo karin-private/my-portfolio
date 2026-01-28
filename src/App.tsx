@@ -3,6 +3,7 @@ import { Home } from "./pages/Home"
 import NoteDetail from "./pages/NoteDetail"
 import Signin from "./pages/Signin"
 import Signup from "./pages/Signup"
+import ChangePasswordForm from "./pages/PassChange"
 import { Routes } from "react-router-dom"
 import Layout from "./Layout"
 import { useEffect, useState } from "react"
@@ -34,6 +35,7 @@ function App() {
           </Route>
           <Route path="/signin" element={<Signin />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/passchange" element={<ChangePasswordForm />} />
         </Routes>
       </div>
     </BrowserRouter>
