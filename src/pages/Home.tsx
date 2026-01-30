@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState('無題');
   const { currentUser } = useCurrentUserStore()
   const noteStore = useNoteStore();
   const navigate = useNavigate()
