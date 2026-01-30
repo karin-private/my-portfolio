@@ -8,9 +8,10 @@ import { ChevronDown, ChevronRight, FileIcon, MoreHorizontal, Plus, Trash, Folde
 import { Item } from '../SideBar/Item';
 import { cn } from '@/lib/utils';
 import { Note } from '@/modules/notes/note.entity';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { noteRepository } from '@/modules/notes/noto.repository';
 import { useCurrentUserStore } from '@/modules/auth/current-user.state';
+
 
 
 
@@ -53,16 +54,24 @@ export function NoteItem({
     };
 
     fetchChildren();
-  }, [currentUser, note.id]);
+  }, [currentUser, note.id, expanded]);
 
-  const getIcon = () => {
+  // const getIcon = () => {
+  //   if (children.length === 0) {
+  //     return FileIcon
+  //   } else {
+  //     return expanded ? ChevronDown : isHoverd ? ChevronRight : Folder
+
+  //   }
+  // }
+  const icon = useMemo(() => {
     if (children.length === 0) {
-      return FileIcon
-    } else {
-      return expanded ? ChevronDown : isHoverd ? ChevronRight : Folder
-
+      return FileIcon;
     }
-  }
+    if (expanded) return ChevronDown;
+    if (isHoverd) return ChevronRight;
+    return Folder;
+  }, [children.length, expanded, isHoverd]);
 
   const menu = (
     <div className={cn('ml-auto flex items-center gap-x-2',
@@ -109,7 +118,7 @@ export function NoteItem({
     >
       <Item
         label={note.title ?? '無題'}
-        icon={getIcon()}
+        icon={icon}
         onIconClick={onExpand}
         trailingItem={menu}
         isActive={isHoverd || isSelected}
