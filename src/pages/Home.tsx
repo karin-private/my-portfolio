@@ -7,13 +7,21 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
-  const [title, setTitle] = useState('無題');
+  const [title, setTitle] = useState('');
   const { currentUser } = useCurrentUserStore()
   const noteStore = useNoteStore();
   const navigate = useNavigate()
 
   const createNote = async () => {
-    const newNote = await noteRepository.create(currentUser!.id, { title });
+    let firtstTitle = "無題"
+
+    if (!title) {
+      firtstTitle = "無題"
+    } else {
+      firtstTitle = title
+
+    }
+    const newNote = await noteRepository.create(currentUser!.id, { title: firtstTitle });
     noteStore.set([newNote])
     setTitle('');
     navigate(`/notes/${newNote.id}`)
