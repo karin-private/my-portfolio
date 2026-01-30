@@ -1,13 +1,19 @@
 import { supabase } from "@/lib/supabase"
+import { convertSupabaseAuthError } from "./auth.error";
 
 export const authRepository = {
+
     async signup(name: string, email: string, password: string) {
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: { data: { name } }
         })
-        if (error != null || data.user === null) throw new Error(error?.message);
+
+        if (error || data.user === null) {
+            throw new Error(convertSupabaseAuthError("signup", error))
+        }
+
         return {
             ...data.user,
             userName: data.user.user_metadata.name
@@ -19,7 +25,9 @@ export const authRepository = {
             email,
             password
         })
-        if (error != null || data.user === null) throw new Error(error?.message);
+        if (error || data.user === null) {
+            throw new Error(convertSupabaseAuthError("login", error))
+        }
         return {
             ...data.user,
             userName: data.user.user_metadata.name

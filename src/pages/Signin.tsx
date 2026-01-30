@@ -3,13 +3,14 @@ import { useState } from 'react';
 import { useCurrentUserStore } from '@/modules/auth/current-user.state';
 import { Link, Navigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { cn } from "@/lib/utils"
 
 function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
   const currentUserStore = useCurrentUserStore();
   const [passDisplay, setPassDisplay] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
 
   const signin = async () => {
@@ -20,9 +21,9 @@ function Signin() {
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
-        setErrorMessage(err.message);
+        setError(err.message);
       } else {
-        setErrorMessage("ログインに失敗しました");
+        setError("ログインに失敗しました");
       }
     }
   }
@@ -42,8 +43,19 @@ function Signin() {
           Karin's Portfolio
         </h2>
         <div className="mt-8 w-full max-w-md">
-          <div>{errorMessage}</div>
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div className={error ? "rounded-md bg-red-50 p-4 min-h-[56px]" : "p-4 min-h-[56px]"}>
+              <div className="flex">
+                <div
+                  className={cn(
+                    "text-sm font-medium text-red-800",
+                    !error && "invisible"
+                  )}
+                >
+                  {error || "dummy"}
+                </div>
+              </div>
+            </div>
             <div className="space-y-6">
               <div>
                 <label
@@ -54,7 +66,7 @@ function Signin() {
                 </label>
                 <div className="mt-1">
                   <input
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); setError("") }}
                     id="email"
                     name="email"
                     placeholder="メールアドレス"
@@ -73,7 +85,7 @@ function Signin() {
                 </label>
                 <div className="mt-1 flex items-center gap-3">
                   <input
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setError("") }}
                     id="password"
                     name="password"
                     placeholder="パスワード"

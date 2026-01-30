@@ -4,6 +4,8 @@ import { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from 'lucide-react';
+import { cn } from "@/lib/utils"
+
 
 
 function Signup() {
@@ -13,16 +15,25 @@ function Signup() {
   const currentUserStore = useCurrentUserStore();
   const navigate = useNavigate();
   const [passDisplay, setPassDisplay] = useState(false)
-
-
-
+  const [error, setError] = useState<string | null>(null)
 
   const signup = async () => {
-    const user = await authRepository.signup(name, email, password)
-    console.log(user)
-    currentUserStore.set(user)
-    if (user) {
-      navigate("/", { replace: true });
+    setError(null)
+
+    try {
+      const user = await authRepository.signup(name, email, password)
+      console.log(user)
+      currentUserStore.set(user)
+
+      if (user) {
+        navigate("/", { replace: true })
+      }
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message)
+      } else {
+        setError("登録に失敗しました")
+      }
     }
   }
 
@@ -33,12 +44,25 @@ function Signup() {
 
   return (
     <div className="min-h-screen bg-gray-100 py-10 px-4 sm:px-6 lg:px-8">
+
       <div className="flex flex-col items-center">
         <h2 className="text-3xl font-extrabold text-gray-900">
           Notionクローン
         </h2>
         <div className="mt-8 w-full max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+            <div className={error ? "rounded-md bg-red-50 p-4 min-h-[56px]" : "p-4 min-h-[56px]"}>
+              <div className="flex">
+                <div
+                  className={cn(
+                    "text-sm font-medium text-red-800",
+                    !error && "invisible"
+                  )}
+                >
+                  {error || "dummy"}
+                </div>
+              </div>
+            </div>
             <div className="space-y-6">
               <div>
                 <label
@@ -49,7 +73,7 @@ function Signup() {
                 </label>
                 <div className="mt-1">
                   <input
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => { setName(e.target.value); setError("") }}
                     id="username"
                     name="username"
                     placeholder="ユーザー名"
@@ -68,7 +92,7 @@ function Signup() {
                 </label>
                 <div className="mt-1">
                   <input
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); setError("") }}
                     id="email"
                     name="email"
                     placeholder="メールアドレス"
@@ -87,12 +111,12 @@ function Signup() {
                 </label>
                 <div className="mt-1 flex items-center gap-3">
                   <input
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); setError("") }}
                     id="password"
                     name="password"
                     placeholder="パスワード"
                     required
-                    type="password"
+                    type={passDisplay ? "text" : "password"}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-slate-500 focus:border-slate-500 sm:text-sm"
                   />
                   <div >
